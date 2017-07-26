@@ -1,0 +1,113 @@
+use Libraries.Game.Game
+use Libraries.Game.Physics.Joints.RopeJoint2D
+use Libraries.Game.Graphics.Drawable
+use Libraries.Compute.Vector2
+use Libraries.Game.Graphics.Color
+use Libraries.Interface.Events.KeyboardListener
+use Libraries.Interface.Events.KeyboardEvent
+use Libraries.Compute.Random
+
+class Main is Game, KeyboardListener
+    
+    constant integer BOX_WIDTH = 100
+    constant integer BOX_HEIGHT = 70
+    
+    Drawable boxOne
+    Drawable boxTwo
+    Drawable boxThree
+    Drawable boxFour
+    Drawable boxFive
+    Drawable boxSix
+    Drawable jointOne
+
+    Color color
+
+    action Main
+        StartGame()
+    end
+
+    action CreateGame
+        EnablePhysics2D(true)
+
+        LoadComponent(jointOne, 40, color:Teal())
+
+        LoadBox(boxOne, BOX_WIDTH, BOX_HEIGHT, color:Red(), true, 1, 0.5)
+        LoadBox(boxTwo, BOX_WIDTH, BOX_HEIGHT, color:Green(), true, 1, 0.5)
+        LoadBox(boxThree, BOX_WIDTH, BOX_HEIGHT, color:Blue(), true, 1, 0.5)
+        LoadBox(boxFour, BOX_WIDTH, BOX_HEIGHT, color:Black(), true, 1, 0.5)
+        LoadBox(boxFive, BOX_WIDTH, BOX_HEIGHT, color:Cyan(), true, 1, 0.5)
+        LoadBox(boxSix, BOX_WIDTH, BOX_HEIGHT, color:DarkGray(), true, 1, 0.5)
+
+        Drawable wall
+        wall:LoadFilledRectangle(100, 1000000)
+        wall:SetPosition(GetScreenWidth(), 0)
+        Add(wall)
+        wall:EnablePhysics(true)
+        wall:SetUnmovable()
+
+        Drawable wall2
+        wall2:LoadFilledRectangle(100, 1000000)
+        wall2:SetPosition(-100, 0)
+        Add(wall2)
+        wall2:EnablePhysics(true)
+        wall2:SetUnmovable()
+
+        Drawable ground
+        ground:LoadFilledRectangle(GetScreenWidth(), 50)
+        Add(ground)
+        ground:EnablePhysics(true)
+        ground:SetUnmovable()
+        ground:SetFriction(0.7)
+
+        jointOne:SetPosition(0, 100)
+
+        boxOne:SetPosition(GetScreenWidth() - BOX_WIDTH - 60, 100)
+        boxTwo:SetPosition(GetScreenWidth() - (BOX_WIDTH * 2) - 60, 100)
+        boxThree:SetPosition(GetScreenWidth() - (BOX_WIDTH * 3) - 60, 100)
+        boxFour:SetPosition(boxOne:GetX() - (BOX_WIDTH / 2), BOX_HEIGHT + 100)
+        boxFive:SetPosition(boxThree:GetX() + (BOX_WIDTH / 2), BOX_HEIGHT + 100)
+        boxSix:SetPosition(boxFive:GetX() + (BOX_WIDTH / 2), BOX_HEIGHT * 2 + 100)
+        
+        AddKeyboardListener(me)
+
+        SetGravity2D(0, -800)
+    end
+    
+    action Update(number seconds)
+        
+    end
+
+    action LoadComponent(Drawable a, integer radius, Color color)
+        a:LoadFilledCircle(radius, color)
+        Add(a)
+        a:EnablePhysics(true)
+        a:SetResponsive()
+        a:SetRestitution(0.75)
+        a:SetFriction(0.7)
+    end
+
+    action LoadBox(Drawable box, integer width, integer height, Color color, boolean enablePhysics, number mass, number restitution)
+        
+        box:LoadFilledRectangle(width, height, color)
+        Add(box)
+        box:EnablePhysics(enablePhysics)
+        box:SetResponsive()
+        box:SetMass(mass)
+        box:SetRestitution(restitution)
+        box:SetFriction(0.7)
+    end
+
+    action PressedKey(KeyboardEvent e)
+        if e:keyCode = e:SPACE
+            
+            Vector2 force
+            force:Set(50000, 20000)
+
+            jointOne:ApplyForceToCenter(force)
+        end
+    end
+
+    action ReleasedKey(KeyboardEvent e)
+
+    end
+end
